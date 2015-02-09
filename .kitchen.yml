@@ -1,0 +1,22 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: ubuntu-12.04
+  - name: centos-6.4
+
+suites:
+  - name: default
+    run_list:
+      - recipe[monit::rake]
+    attributes:
+      monit:
+        rake:
+          app_root: /tmp
+          jobs:
+            apn_sender:
+              job: apn::sender

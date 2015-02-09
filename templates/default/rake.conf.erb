@@ -1,0 +1,5 @@
+check process <%= @name %> with pidfile <%= @node[:monit][:rake][:app_root] %>/tmp/pids/<%= @name %>.pid
+  group <%= @name %>
+  start program = "/usr/bin/env PATH=/usr/local/bin:/usr/local/ruby/bin:/usr/bin:/bin:$PATH RACK_ENV=<%= node['rack_env'] || node.chef_environment %> /bin/sh -l -c 'cd <%= @node[:monit][:rake][:app_root] %> && nohup bundle exec rake environment <%= @job %> RAILS_ENV=<%= node['rack_env'] || node.chef_environment %> VERBOSE=1 PIDFILE=<%= @node[:monit][:rake][:app_root] %>/tmp/pids/<%= @name %>.pid & >> log/<%= @name %>.log 2>&1'" with timeout 90 seconds
+  stop program = "/bin/sh -c 'cd <%= @node[:monit][:rake][:app_root] %> && kill -9 `cat tmp/pids/<%= @name %>.pid` && rm -f tmp/pids/<%= @name %>.pid; exit 0;'"
+  if totalmem is greater than 300 MB for 10 cycles then restart
